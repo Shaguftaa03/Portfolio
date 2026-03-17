@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shagufta Naaz — Penetration Tester</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #0a0a0f;
+    --surface: #111118;
+    --surface2: #16161f;
+    --border: #1e1e2e;
+    --accent: #e066ff;
+    --accent2: #61cfff;
+    --accent3: #ff6b9d;
+    --text: #e8e8f0;
+    --muted: #7a7a9a;
+    --mono: 'Space Mono', monospace;
+    --display: 'Syne', sans-serif;
+    --body: 'DM Sans', sans-serif;
+  }
+
+  @media print {
+    body { background: white !important; color: #111 !important; }
+    .sidebar { background: #f4f4f4 !important; }
+    .hero { background: #111 !important; }
+    * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--body);
+    font-weight: 300;
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.4;
+  }
+
+  .wrapper {
+    max-width: 1100px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 1;
+  }
+
+  .hero {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 48px 56px 40px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: -80px; right: -80px;
+    width: 400px; height: 400px;
+    background: radial-gradient(circle, rgba(224,102,255,0.09) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .hero::after {
+    content: '';
+    position: absolute;
+    bottom: -60px; left: 30%;
+    width: 300px; height: 300px;
+    background: radial-gradient(circle, rgba(97,207,255,0.06) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .hero-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 32px;
+    flex-wrap: wrap;
+  }
+
+  .tag {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--accent);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .tag::before {
+    content: '';
+    display: inline-block;
+    width: 24px; height: 1px;
+    background: var(--accent);
+  }
+
+  h1 {
+    font-family: var(--display);
+    font-size: clamp(42px, 6vw, 68px);
+    font-weight: 800;
+    line-height: 0.95;
+    letter-spacing: -0.03em;
+    color: var(--text);
+  }
+
+  h1 span { color: var(--accent); }
+
+  .title-line {
+    font-family: var(--display);
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--muted);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    margin-top: 14px;
+  }
+
+  .contact-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px 24px;
+    margin-top: 32px;
+  }
+
+  .contact-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 13px;
+    color: var(--muted);
+  }
+
+  .contact-item .label {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    min-width: 52px;
+  }
+
+  .contact-item a { color: var(--text); text-decoration: none; font-size: 13px; }
+  .contact-item a:hover { color: var(--accent); }
+
+  .stats-row {
+    display: flex;
+    gap: 32px;
+    margin-top: 32px;
+    padding-top: 28px;
+    border-top: 1px solid var(--border);
+    flex-wrap: wrap;
+  }
+
+  .stat { display: flex; flex-direction: column; gap: 4px; }
+
+  .stat-num {
+    font-family: var(--display);
+    font-size: 28px;
+    font-weight: 800;
+    color: var(--accent);
+    line-height: 1;
+  }
+
+  .stat-label {
+    font-size: 11px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-family: var(--mono);
+  }
+
+  .main {
+    display: grid;
+    grid-template-columns: 1fr 320px;
+    gap: 0;
+    align-items: start;
+  }
+
+  .left { padding: 40px 48px 40px 56px; border-right: 1px solid var(--border); }
+  .sidebar { padding: 40px 32px; background: var(--surface); }
+
+  .section { margin-bottom: 40px; }
+
+  .section-label {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .section-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(to right, var(--border), transparent);
+  }
+
+  .summary p { font-size: 14px; line-height: 1.8; color: #b0b0c8; }
+
+  .exp-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 6px;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+
+  .exp-role { font-family: var(--display); font-size: 16px; font-weight: 700; color: var(--text); }
+  .exp-company { font-size: 13px; color: var(--accent2); font-weight: 500; margin-top: 2px; }
+  .exp-meta { font-family: var(--mono); font-size: 11px; color: var(--muted); white-space: nowrap; text-align: right; }
+
+  .exp-bullets { list-style: none; margin-top: 12px; display: flex; flex-direction: column; gap: 7px; }
+
+  .exp-bullets li {
+    font-size: 13px;
+    color: #9090b0;
+    padding-left: 16px;
+    position: relative;
+    line-height: 1.6;
+  }
+
+  .exp-bullets li::before {
+    content: '▸';
+    position: absolute;
+    left: 0;
+    color: var(--accent);
+    font-size: 10px;
+    top: 3px;
+  }
+
+  .project-grid { display: flex; flex-direction: column; gap: 8px; margin-top: 4px; }
+
+  .project-row {
+    display: grid;
+    grid-template-columns: 220px 1fr;
+    gap: 12px;
+    align-items: baseline;
+    padding: 8px 12px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-left: 2px solid transparent;
+    border-radius: 4px;
+    transition: border-color 0.2s;
+  }
+
+  .project-row:hover { border-left-color: var(--accent); }
+  .project-name { font-family: var(--mono); font-size: 11px; color: var(--text); font-weight: 700; line-height: 1.4; }
+  .project-desc { font-size: 12px; color: var(--muted); line-height: 1.5; }
+
+  .skill-block { margin-bottom: 24px; }
+
+  .skill-title {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    margin-bottom: 8px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .tags { display: flex; flex-wrap: wrap; gap: 5px; }
+
+  .tag-chip {
+    font-size: 11px;
+    font-family: var(--mono);
+    color: #9090b0;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    padding: 3px 8px;
+    border-radius: 2px;
+    line-height: 1.4;
+  }
+
+  .tag-chip.hi   { color: var(--accent);  border-color: rgba(224,102,255,0.2); background: rgba(224,102,255,0.04); }
+  .tag-chip.med  { color: var(--accent2); border-color: rgba(97,207,255,0.2);  background: rgba(97,207,255,0.04);  }
+  .tag-chip.warn { color: var(--accent3); border-color: rgba(255,107,157,0.2); background: rgba(255,107,157,0.04); }
+
+  .edu-item { margin-bottom: 14px; }
+  .edu-degree { font-size: 13px; font-weight: 500; color: var(--text); }
+  .edu-school { font-size: 12px; color: var(--muted); margin-top: 2px; font-family: var(--mono); }
+
+  .ctf-item { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 10px; }
+  .ctf-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); margin-top: 5px; flex-shrink: 0; }
+  .ctf-text { font-size: 12px; color: var(--muted); line-height: 1.5; }
+  .ctf-text strong { color: var(--text); font-weight: 500; }
+
+  .domain-list { display: flex; flex-direction: column; gap: 5px; }
+
+  .domain-item {
+    font-size: 12px;
+    color: var(--muted);
+    font-family: var(--mono);
+    padding: 4px 0;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .domain-item::before { content: ''; width: 4px; height: 4px; background: var(--accent); border-radius: 50%; flex-shrink: 0; }
+
+  .divider { height: 1px; background: linear-gradient(to right, var(--border), transparent); margin: 28px 0; }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .hero    { animation: fadeUp 0.5s ease both; }
+  .left    { animation: fadeUp 0.6s 0.1s ease both; }
+  .sidebar { animation: fadeUp 0.6s 0.2s ease both; }
+
+  @media (max-width: 800px) {
+    .main { grid-template-columns: 1fr; }
+    .left { border-right: none; padding: 32px; }
+    .sidebar { border-top: 1px solid var(--border); padding: 32px; }
+    .hero { padding: 36px 32px; }
+    .contact-grid { grid-template-columns: 1fr; }
+    .project-row { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+<div class="wrapper">
+
+  <header class="hero">
+    <div class="hero-top">
+      <div class="name-block">
+        <div class="tag">Cybersecurity // Web Application Security</div>
+        <h1>Shagufta<br><span>Naaz</span></h1>
+        <div class="title-line">Junior Penetration Tester &nbsp;·&nbsp; Cybersecurity Intern</div>
+      </div>
+      <div class="contact-grid">
+        <div class="contact-item">
+          <span class="label">Email</span>
+          <a href="mailto:shaguftanaaz2303@gmail.com">shaguftanaaz2303@gmail.com</a>
+        </div>
+        <div class="contact-item">
+          <span class="label">Phone</span>
+          <span>+91 6204413668</span>
+        </div>
+        <div class="contact-item">
+          <span class="label">LinkedIn</span>
+          <a href="https://linkedin.com/in/shagufta-naaz-0x01" target="_blank">shagufta-naaz-0x01</a>
+        </div>
+        <div class="contact-item">
+          <span class="label">Location</span>
+          <span>Delhi, India</span>
+        </div>
+      </div>
+    </div>
+    <div class="stats-row">
+      <div class="stat"><span class="stat-num">6M+</span><span class="stat-label">Experience</span></div>
+      <div class="stat"><span class="stat-num">5+</span><span class="stat-label">Domains</span></div>
+      <div class="stat"><span class="stat-num">120+</span><span class="stat-label">CTF Solves</span></div>
+      <div class="stat"><span class="stat-num">OWASP</span><span class="stat-label">Top 10</span></div>
+      <div class="stat"><span class="stat-num">5+</span><span class="stat-label">VulnHub</span></div>
+    </div>
+  </header>
+
+  <div class="main">
+    <div class="left">
+
+      <div class="section summary">
+        <div class="section-label">Profile</div>
+        <p>Junior Penetration Tester with 6+ months of hands-on experience in real-world web application security testing and Vulnerability Assessment &amp; Penetration Testing (VAPT). Proficient in identifying OWASP Top 10 vulnerabilities, authentication and authorization flaws, input validation issues, and security misconfigurations through manual and tool-assisted testing. Familiar with firewall configuration concepts, endpoint security, SIEM-based event monitoring, and networking fundamentals. Skilled in delivering clear, structured penetration testing reports with practical and actionable remediation recommendations.</p>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="section">
+        <div class="section-label">Experience</div>
+        <div class="exp-header">
+          <div>
+            <div class="exp-role">Penetration Tester Intern</div>
+            <div class="exp-company">CyberXchange</div>
+          </div>
+          <div class="exp-meta">Delhi, India<br>Oct 2025 – Feb 2026</div>
+        </div>
+        <ul class="exp-bullets">
+          <li>Conducted comprehensive web application security assessments (VAPT) focusing on application logic, authentication, authorization, and input validation controls.</li>
+          <li>Discovered and validated critical, medium, and low-severity vulnerabilities including SQL Injection, rate-limiting weaknesses, business logic flaws, XSS, Clickjacking, missing security headers, username enumeration, and improper HTTP method handling through structured manual testing.</li>
+          <li>Utilized Burp Suite (Community and Professional) for HTTP request interception, manual request manipulation, parameter tampering, and automated vulnerability scanning.</li>
+          <li>Analyzed HTTP security headers and firewall-level controls; identified missing protections such as Content-Security-Policy (CSP), HSTS, and X-Frame-Options during application assessments.</li>
+          <li>Evaluated authentication mechanisms, session management, and access control policies to identify broken access control and privilege escalation vulnerabilities.</li>
+          <li>Analyzed application security event logs and identified patterns of malicious activity for inclusion in client assessment reports.</li>
+          <li>Delivered structured penetration testing reports covering scope, methodology, technical impact, CVSS severity ratings, evidence screenshots, and prioritized remediation recommendations.</li>
+          <li>Collaborated within a security team to validate findings, reproduce edge cases, and improve overall client security posture.</li>
+        </ul>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="section">
+        <div class="section-label">Key Expertise Areas</div>
+        <div class="project-grid">
+          <div class="project-row">
+            <div class="project-name">Web App Security</div>
+            <div class="project-desc">OWASP Top 10, SQL Injection, XSS, CSRF, Clickjacking, File Upload, Access Control, Auth Bypass, Business Logic Flaws.</div>
+          </div>
+          <div class="project-row">
+            <div class="project-name">Ethical Hacking & VAPT</div>
+            <div class="project-desc">Black-box penetration testing, vulnerability assessment, impact analysis, exploit validation, CVSS severity rating, pentest report writing.</div>
+          </div>
+          <div class="project-row">
+            <div class="project-name">Firewall & Network Security</div>
+            <div class="project-desc">HTTP security headers, firewall configuration concepts, TCP/IP, network protocols, and secure network design principles.</div>
+          </div>
+          <div class="project-row">
+            <div class="project-name">Endpoint Security</div>
+            <div class="project-desc">Authentication mechanisms, session management, access control evaluation, malware concepts, device security assessment.</div>
+          </div>
+          <div class="project-row">
+            <div class="project-name">SIEM & Monitoring</div>
+            <div class="project-desc">Security event log analysis, attack pattern identification, incident detection and documentation using Splunk.</div>
+          </div>
+          <div class="project-row">
+            <div class="project-name">Report Writing</div>
+            <div class="project-desc">Structured pentest reports with scope, methodology, CVSS ratings, evidence screenshots, and remediation guidance.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="section">
+        <div class="section-label">Labs & CTF Highlights</div>
+        <ul class="exp-bullets">
+          <li><strong style="color:var(--text)">VulnHub</strong> — Rooted DigitalWorld.local (Dev), Tommy Boy, Prime, Mercy, and Metasploitable 2; covered full attack lifecycle from reconnaissance to post-exploitation.</li>
+          <li><strong style="color:var(--text)">PortSwigger Web Security Academy</strong> — Completed hands-on labs covering SQL Injection, XSS, Path Traversal, CSRF, Authentication Bypass, and 2FA Bypass.</li>
+          <li><strong style="color:var(--text)">PicoCTF</strong> — Solved 120+ challenges spanning web exploitation, cryptography, forensics, binary exploitation, and reverse engineering.</li>
+        </ul>
+      </div>
+
+    </div>
+
+    <div class="sidebar">
+
+      <div class="skill-block">
+        <div class="skill-title">Web & App Attacks</div>
+        <div class="tags">
+          <span class="tag-chip hi">SQL Injection</span>
+          <span class="tag-chip hi">XSS</span>
+          <span class="tag-chip hi">CSRF</span>
+          <span class="tag-chip hi">Clickjacking</span>
+          <span class="tag-chip">File Upload Vulns</span>
+          <span class="tag-chip">Access Control Issues</span>
+          <span class="tag-chip">Auth Bypass</span>
+          <span class="tag-chip">Business Logic Flaws</span>
+          <span class="tag-chip">Security Misconfig</span>
+          <span class="tag-chip">Username Enumeration</span>
+          <span class="tag-chip">Rate Limit Bypass</span>
+          <span class="tag-chip">HTTP Method Abuse</span>
+          <span class="tag-chip hi">Broken Access Control</span>
+          <span class="tag-chip">Privilege Escalation</span>
+        </div>
+      </div>
+
+      <div class="skill-block">
+        <div class="skill-title">Security Headers & Controls</div>
+        <div class="tags">
+          <span class="tag-chip med">CSP</span>
+          <span class="tag-chip med">HSTS</span>
+          <span class="tag-chip med">X-Frame-Options</span>
+          <span class="tag-chip">X-Content-Type</span>
+          <span class="tag-chip">Referrer-Policy</span>
+          <span class="tag-chip">CORS Misconfig</span>
+          <span class="tag-chip">Cookie Flags</span>
+        </div>
+      </div>
+
+      <div class="skill-block">
+        <div class="skill-title">Tools & Platforms</div>
+        <div class="tags">
+          <span class="tag-chip hi">Burp Suite Pro</span>
+          <span class="tag-chip hi">Metasploit</span>
+          <span class="tag-chip hi">Nessus</span>
+          <span class="tag-chip">OWASP ZAP</span>
+          <span class="tag-chip">SQLmap</span>
+          <span class="tag-chip">Nmap</span>
+          <span class="tag-chip">Nikto</span>
+          <span class="tag-chip">dirsearch</span>
+          <span class="tag-chip">subfinder</span>
+          <span class="tag-chip">enum4linux</span>
+          <span class="tag-chip">Netcat</span>
+          <span class="tag-chip">John the Ripper</span>
+          <span class="tag-chip">Bloodhound</span>
+          <span class="tag-chip">Empire</span>
+          <span class="tag-chip">Wireshark</span>
+          <span class="tag-chip">Splunk</span>
+          <span class="tag-chip">Kali Linux</span>
+          <span class="tag-chip">iptables</span>
+        </div>
+      </div>
+
+      <div class="skill-block">
+        <div class="skill-title">Network & Protocols</div>
+        <div class="tags">
+          <span class="tag-chip warn">TCP/IP</span>
+          <span class="tag-chip warn">HTTP/S</span>
+          <span class="tag-chip">DNS</span>
+          <span class="tag-chip">FTP/SSH</span>
+          <span class="tag-chip">SMB</span>
+          <span class="tag-chip">Firewall Config</span>
+          <span class="tag-chip">Secure Net Design</span>
+        </div>
+      </div>
+
+      <div class="skill-block">
+        <div class="skill-title">Methodologies</div>
+        <div class="tags">
+          <span class="tag-chip hi">OWASP Top 10</span>
+          <span class="tag-chip">Black-box Testing</span>
+          <span class="tag-chip">CVSS Rating</span>
+          <span class="tag-chip">Impact Analysis</span>
+          <span class="tag-chip">Exploit Validation</span>
+          <span class="tag-chip">Pentest Reporting</span>
+          <span class="tag-chip">Remediation Review</span>
+        </div>
+      </div>
+
+      <div class="skill-block">
+        <div class="skill-title">Education</div>
+        <div class="edu-item">
+          <div class="edu-degree">Bachelor of Computer Applications</div>
+          <div class="edu-school">ICFAI University, Jharkhand</div>
+        </div>
+      </div>
+
+      <div class="skill-block">
+        <div class="skill-title">Labs & CTF</div>
+        <div class="ctf-item">
+          <div class="ctf-dot"></div>
+          <div class="ctf-text"><strong>VulnHub</strong> — Rooted 5+ machines: DigitalWorld.local, Tommy Boy, Prime, Mercy, Metasploitable 2.</div>
+        </div>
+        <div class="ctf-item">
+          <div class="ctf-dot" style="background:var(--accent2)"></div>
+          <div class="ctf-text"><strong>PortSwigger</strong> — SQLi, XSS, Path Traversal, CSRF, Auth Bypass, 2FA Bypass labs.</div>
+        </div>
+        <div class="ctf-item">
+          <div class="ctf-dot" style="background:var(--accent3)"></div>
+          <div class="ctf-text"><strong>PicoCTF</strong> — 120+ challenges across Web, Crypto, Forensics, Binary, and Reverse Engineering.</div>
+        </div>
+      </div>
+
+      <div class="skill-block">
+        <div class="skill-title">Soft Skills</div>
+        <div class="domain-list">
+          <div class="domain-item">Analytical Problem-Solving</div>
+          <div class="domain-item">Team Collaboration</div>
+          <div class="domain-item">Adaptable Under Pressure</div>
+          <div class="domain-item">Continuous Learning</div>
+          <div class="domain-item">Clear Technical Reporting</div>
+          <div class="domain-item">Open to Relocation</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+</body>
+</html>
